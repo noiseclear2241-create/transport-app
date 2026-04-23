@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Expense {
+  id           String   @id @default(cuid())
+  employeeName String
+  workSite     String
+  date         DateTime
+  from         String
+  to           String
+  transport    String
+  amount       Int
+  purpose      String?
+  status       Status   @default(PENDING)
+  adminNote    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
