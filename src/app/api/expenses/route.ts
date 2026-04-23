@@ -24,12 +24,17 @@ export async function GET(request: NextRequest) {
     where.workSite = { contains: workSite };
   }
 
-  const expenses = await prisma.expense.findMany({
-    where,
-    orderBy: { date: "desc" },
-  });
-
-  return Response.json(expenses);
+  try {
+    const expenses = await prisma.expense.findMany({
+      where,
+      orderBy: { date: "desc" },
+    });
+    return Response.json(expenses);
+  } catch (e) {
+    const err = e as Error & { code?: string; message?: string };
+    console.error("GET /api/expenses error:", err.code, err.message);
+    return Response.json({ error: err.message, code: err.code }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
