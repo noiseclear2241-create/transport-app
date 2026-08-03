@@ -1,5 +1,14 @@
 import type { IssuerInfo, TaxRate, TemplateId } from "../types";
 
+function readImageAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export interface FormState {
   recipient: string;
   amount: string; // kept as string while editing, parsed to number on submit
@@ -152,6 +161,46 @@ export default function ReceiptForm({
                 未入力の場合、領収書に登録番号の欄は表示されません。
               </p>
             </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>印影画像（任意）</label>
+            <div className="flex items-center gap-3">
+              {value.issuer.stampImage ? (
+                <img
+                  src={value.issuer.stampImage}
+                  alt="印影プレビュー"
+                  className="h-16 w-16 rounded-full border border-gray-200 object-contain"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full border border-dashed border-gray-300 text-xs text-gray-400">
+                  未設定
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setIssuer("stampImage", await readImageAsDataUrl(file));
+                  e.target.value = "";
+                }}
+                className="text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-indigo-700"
+              />
+              {value.issuer.stampImage && (
+                <button
+                  type="button"
+                  onClick={() => setIssuer("stampImage", "")}
+                  className="text-sm text-gray-500 hover:underline"
+                >
+                  削除
+                </button>
+              )}
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              角印・代表者印などの画像をアップロードすると、領収書の印影スペースに反映されます。未設定の場合は枠のみ表示されます。
+            </p>
           </div>
         </div>
       </fieldset>

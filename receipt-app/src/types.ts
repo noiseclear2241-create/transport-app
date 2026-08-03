@@ -5,6 +5,7 @@ export interface IssuerInfo {
   address: string;
   tel: string;
   registrationNumber: string; // インボイス登録番号（任意）
+  stampImage: string; // 印影画像（base64 data URL、任意）
 }
 
 export type TaxRate = 10 | 8 | 0;
@@ -25,4 +26,5 @@ export const emptyIssuer: IssuerInfo = {
   address: "",
   tel: "",
   registrationNumber: "",
+  stampImage: "",
 };

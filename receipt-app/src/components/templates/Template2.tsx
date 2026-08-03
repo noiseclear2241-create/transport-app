@@ -83,7 +83,7 @@ const Template2 = forwardRef<HTMLDivElement, TemplateProps>(({ data }, ref) => {
               )}
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <StampBox size={20} />
+              <StampBox size={20} imageSrc={data.issuer.stampImage} />
             </div>
           </div>
         </div>

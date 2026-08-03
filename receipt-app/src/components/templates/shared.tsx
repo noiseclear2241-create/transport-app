@@ -12,24 +12,40 @@ export const subInk = "#555555";
 export const line = "#333333";
 export const faintLine = "#cccccc";
 
-export const StampBox = ({ size = 22 }: { size?: number }) => (
-  <div
-    style={{
-      width: `${size}mm`,
-      height: `${size}mm`,
-      border: `1px dashed ${faintLine}`,
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: faintLine,
-      fontSize: "10px",
-      flexShrink: 0,
-    }}
-  >
-    印
-  </div>
-);
+export const StampBox = ({ size = 22, imageSrc }: { size?: number; imageSrc?: string }) => {
+  if (imageSrc) {
+    return (
+      <img
+        src={imageSrc}
+        alt="印影"
+        style={{
+          width: `${size}mm`,
+          height: `${size}mm`,
+          objectFit: "contain",
+          flexShrink: 0,
+        }}
+      />
+    );
+  }
+  return (
+    <div
+      style={{
+        width: `${size}mm`,
+        height: `${size}mm`,
+        border: `1px dashed ${faintLine}`,
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: faintLine,
+        fontSize: "10px",
+        flexShrink: 0,
+      }}
+    >
+      印
+    </div>
+  );
+};
 
 export interface TemplateProps {
   data: ReceiptData;

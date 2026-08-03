@@ -87,7 +87,7 @@ const Template3 = forwardRef<HTMLDivElement, TemplateProps>(({ data }, ref) => {
             {data.issuer.tel && <div>TEL：{data.issuer.tel}</div>}
             {hasRegistration && <div>登録番号：{data.issuer.registrationNumber}</div>}
           </div>
-          <StampBox size={20} />
+          <StampBox size={20} imageSrc={data.issuer.stampImage} />
         </div>
       </div>
     </TemplateRoot>
