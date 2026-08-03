@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // receipt-app is an independent project with its own lint/tsconfig.
+    "receipt-app/**",
   ]),
 ]);
 
