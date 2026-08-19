@@ -114,6 +114,7 @@ class NotificationService {
           iOS: DarwinNotificationDetails(interruptionLevel: InterruptionLevel.active),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
         payload: 'task:${task.id}',
       );
     }
@@ -143,6 +144,7 @@ class NotificationService {
         iOS: DarwinNotificationDetails(interruptionLevel: InterruptionLevel.active),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       payload: 'task:${task.id}',
     );
   }

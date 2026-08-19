@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/models.dart';
 import '../../services/app_repository.dart';
+import '../../widgets/family_member_picker.dart';
 import 'contract_detail_screen.dart';
 
 /// 契約登録・編集（#13）。
@@ -23,11 +24,13 @@ class _ContractFormScreenState extends State<ContractFormScreen> {
   final _numberController = TextEditingController();
   final _feeController = TextEditingController();
   final _memoController = TextEditingController();
+  late String _familyMemberId;
 
   @override
   void initState() {
     super.initState();
     final e = widget.existing;
+    _familyMemberId = e?.familyMemberId ?? context.read<AppRepository>().defaultFamilyMemberId;
     _type = e?.type ?? ContractType.smartphone;
     _carrier = e?.carrier ?? Carrier.docomo;
     _carrierOtherController.text = e?.carrierOther ?? '';
@@ -40,11 +43,17 @@ class _ContractFormScreenState extends State<ContractFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.existing != null;
+    final repo = context.watch<AppRepository>();
     return Scaffold(
       appBar: AppBar(title: Text(isEdit ? '契約を編集' : '契約を登録')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          FamilyMemberPicker(
+            members: repo.familyMembers,
+            selectedId: _familyMemberId,
+            onChanged: (id) => setState(() => _familyMemberId = id),
+          ),
           const Text('何を契約しましたか？', style: TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           Wrap(
@@ -62,7 +71,7 @@ class _ContractFormScreenState extends State<ContractFormScreen> {
           const Text('どこの会社ですか？', style: TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           DropdownButtonFormField<Carrier>(
-            value: _carrier,
+            initialValue: _carrier,
             items: [
               for (final c in Carrier.values) DropdownMenuItem(value: c, child: Text(c.label)),
             ],
@@ -123,7 +132,7 @@ class _ContractFormScreenState extends State<ContractFormScreen> {
 
     if (widget.existing == null) {
       final contract = await repo.addContract(
-        familyMemberId: repo.defaultFamilyMemberId,
+        familyMemberId: _familyMemberId,
         type: _type,
         carrier: _carrier,
         carrierOther: _carrierOtherController.text.trim().isEmpty ? null : _carrierOtherController.text.trim(),
@@ -138,6 +147,7 @@ class _ContractFormScreenState extends State<ContractFormScreen> {
       );
     } else {
       final updated = widget.existing!.copyWith(
+        familyMemberId: _familyMemberId,
         type: _type,
         carrier: _carrier,
         carrierOther: _carrierOtherController.text.trim().isEmpty ? null : _carrierOtherController.text.trim(),

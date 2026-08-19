@@ -62,6 +62,7 @@ class Contract {
       );
 
   Contract copyWith({
+    String? familyMemberId,
     ContractType? type,
     Carrier? carrier,
     String? carrierOther,
@@ -72,7 +73,7 @@ class Contract {
   }) =>
       Contract(
         id: id,
-        familyMemberId: familyMemberId,
+        familyMemberId: familyMemberId ?? this.familyMemberId,
         type: type ?? this.type,
         carrier: carrier ?? this.carrier,
         carrierOther: carrierOther ?? this.carrierOther,

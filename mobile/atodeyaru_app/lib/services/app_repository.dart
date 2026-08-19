@@ -65,18 +65,44 @@ class AppRepository extends ChangeNotifier {
   // ---------------------------------------------------------------------
   // 無料版の利用制限（#23, #29, #30）
   // ---------------------------------------------------------------------
-  bool get canAddContract => settings.isPremium || contracts.length < 1;
-  bool get canAddDevice => settings.isPremium || devices.length < 1;
+  bool get canAddContract => settings.isPremium || contracts.isEmpty;
+  bool get canAddDevice => settings.isPremium || devices.isEmpty;
   bool get canAddFamilyMember => settings.isPremium;
   bool get canUseGoogleCalendar => settings.isPremium;
 
   // ---------------------------------------------------------------------
-  // family members
+  // family members（#24）。電話番号は同姓同名の家族を区別するための任意項目。
   // ---------------------------------------------------------------------
-  Future<void> addFamilyMember(String name, String? relation) async {
-    final m = FamilyMember(id: _uuid.v4(), name: name, relation: relation, createdAt: DateTime.now());
+  Future<void> addFamilyMember(String name, String? relation, {String? phoneNumber}) async {
+    final m = FamilyMember(
+      id: _uuid.v4(),
+      name: name,
+      relation: relation,
+      phoneNumber: phoneNumber,
+      createdAt: DateTime.now(),
+    );
     await _db.upsertFamilyMember(m);
     familyMembers = await _db.getFamilyMembers();
+    notifyListeners();
+  }
+
+  Future<void> updateFamilyMember(FamilyMember updated) async {
+    await _db.upsertFamilyMember(updated);
+    familyMembers = await _db.getFamilyMembers();
+    notifyListeners();
+  }
+
+  /// 家族メンバーを削除する。最後の1人（自分）は削除できない。
+  /// 削除済みメンバーが所有していた契約・端末はデータとしては残るため、
+  /// 別のメンバーへの付け替えを促す（#24）。
+  Future<void> deleteFamilyMember(String id) async {
+    if (familyMembers.length <= 1) return;
+    await _db.deleteFamilyMember(id);
+    familyMembers = await _db.getFamilyMembers();
+    if (_defaultFamilyMemberId == id) {
+      _defaultFamilyMemberId = familyMembers.first.id;
+      await _settingsService.setDefaultFamilyMemberId(_defaultFamilyMemberId!);
+    }
     notifyListeners();
   }
 

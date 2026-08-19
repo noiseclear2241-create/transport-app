@@ -5,6 +5,7 @@ import '../../models/models.dart';
 import '../../services/app_repository.dart';
 import '../../services/date_calculator.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/family_member_picker.dart';
 
 /// 端末登録・編集（#19, #20）。
 /// 返却条件は会社・プログラムにより異なるため、断定的な表現を避け
@@ -33,11 +34,13 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
   DevicePurchaseMethod _purchaseMethod = DevicePurchaseMethod.installment;
   ReturnPeriodPreset _returnPeriod = ReturnPeriodPreset.unknown;
   DateTime? _manualReturnCheckDate;
+  late String _familyMemberId;
 
   @override
   void initState() {
     super.initState();
     final e = widget.existing;
+    _familyMemberId = e?.familyMemberId ?? context.read<AppRepository>().defaultFamilyMemberId;
     _nameController.text = e?.name ?? '';
     _makerController.text = e?.maker ?? '';
     _priceController.text = e?.priceYen?.toString() ?? '';
@@ -62,11 +65,17 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
   @override
   Widget build(BuildContext context) {
     final displayDate = _manualReturnCheckDate ?? _autoDate;
+    final repo = context.watch<AppRepository>();
     return Scaffold(
       appBar: AppBar(title: Text(widget.existing == null ? '端末を登録' : '端末を編集')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          FamilyMemberPicker(
+            members: repo.familyMembers,
+            selectedId: _familyMemberId,
+            onChanged: (id) => setState(() => _familyMemberId = id),
+          ),
           TextField(controller: _nameController, decoration: const InputDecoration(labelText: '端末名（例: iPhone 16）')),
           const SizedBox(height: 12),
           TextField(controller: _makerController, decoration: const InputDecoration(labelText: 'メーカー')),
@@ -207,7 +216,7 @@ class _DeviceFormScreenState extends State<DeviceFormScreen> {
     }
     await repo.upsertDevice(
       id: widget.existing?.id,
-      familyMemberId: widget.existing?.familyMemberId ?? repo.defaultFamilyMemberId,
+      familyMemberId: _familyMemberId,
       contractId: widget.contractId ?? widget.existing?.contractId,
       name: _nameController.text.trim().isEmpty ? '端末' : _nameController.text.trim(),
       maker: _makerController.text.trim().isEmpty ? null : _makerController.text.trim(),

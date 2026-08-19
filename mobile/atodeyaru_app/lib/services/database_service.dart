@@ -30,6 +30,7 @@ class DatabaseService {
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             relation TEXT,
+            phone_number TEXT,
             created_at TEXT NOT NULL
           )
         ''');

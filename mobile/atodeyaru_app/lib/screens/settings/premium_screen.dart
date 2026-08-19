@@ -58,7 +58,7 @@ class PremiumScreen extends StatelessWidget {
           ] else if (settings.subscriptionState == SubscriptionState.trial) ...[
             _TrialStatusCard(daysRemaining: settings.trialDaysRemaining(DateTime.now())),
             const SizedBox(height: 16),
-            _PlanButtons(),
+            const _PlanButtons(),
           ] else if (settings.isPremium) ...[
             Container(
               padding: const EdgeInsets.all(16),
@@ -70,7 +70,7 @@ class PremiumScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w700)),
             ),
           ] else ...[
-            _PlanButtons(),
+            const _PlanButtons(),
           ],
           const SizedBox(height: 12),
           TextButton(
@@ -139,7 +139,7 @@ class _TrialStatusCard extends StatelessWidget {
 }
 
 class _PlanButtons extends StatelessWidget {
-  const _PlanButtons({super.key});
+  const _PlanButtons();
 
   @override
   Widget build(BuildContext context) {

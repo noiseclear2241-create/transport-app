@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme.dart';
-
 /// 「あと○日」表示（#25）。重要な予定を大きく見せるための共通ウィジェット。
 class CountdownBadge extends StatelessWidget {
   const CountdownBadge({super.key, required this.daysUntil, required this.color});
