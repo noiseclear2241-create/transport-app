@@ -5,12 +5,25 @@ import 'package:timezone/timezone.dart' as tz;
 import '../models/models.dart';
 import 'date_calculator.dart';
 
+/// AppRepositoryが依存する通知操作のインターフェース。
+/// 実機のプラットフォームチャンネルを持たないテスト環境でも
+/// AppRepositoryのロジック（タスク生成・完了・削除など）を検証できるよう、
+/// 本番実装（NotificationService）とは切り離して注入できるようにしている。
+abstract class NotificationScheduler {
+  Future<void> scheduleTaskNotifications(TaskItem task, List<int> daysBeforeList);
+  Future<void> scheduleSnoozeNotification(TaskItem task, DateTime exactTime);
+  Future<void> cancelTaskNotifications(String taskId, {List<int> possibleDaysBefore = const [
+    90, 60, 30, 14, 7, 3, 1, 0,
+  ]});
+  Future<void> cancelAll();
+}
+
 /// ローカル通知サービス（#36, #37, #38）。
 ///
 /// サーバーから毎回通知する設計は禁止（#38）。固定の予定（解約確認日・
 /// 返却確認日など）は端末側のローカル通知のみで完結させ、サーバー費用を
 /// 発生させない。タイムゾーンはAsia/Tokyo固定（#15）。
-class NotificationService {
+class NotificationService implements NotificationScheduler {
   NotificationService._internal();
   static final NotificationService instance = NotificationService._internal();
 
@@ -77,6 +90,7 @@ class NotificationService {
   }
 
   /// タスクの締切日から、指定された「○日前」リストぶんの通知をまとめて予約する。
+  @override
   Future<void> scheduleTaskNotifications(TaskItem task, List<int> daysBeforeList) async {
     await init();
     for (final days in daysBeforeList) {
@@ -122,6 +136,7 @@ class NotificationService {
 
   /// 「あとで」機能（#39）：正確な日時を指定して1件だけ通知する。
   /// 日付単位の scheduleTaskNotifications と異なり、時刻まで指定できる。
+  @override
   Future<void> scheduleSnoozeNotification(TaskItem task, DateTime exactTime) async {
     await init();
     final scheduled = tz.TZDateTime.from(exactTime, tz.local);
@@ -150,6 +165,7 @@ class NotificationService {
   }
 
   /// タスクの通知をすべてキャンセルする（完了・削除・再計算時に使用）。
+  @override
   Future<void> cancelTaskNotifications(String taskId, {List<int> possibleDaysBefore = const [
     90, 60, 30, 14, 7, 3, 1, 0,
   ]}) async {
@@ -160,6 +176,7 @@ class NotificationService {
     await _plugin.cancel(_notificationIdFor(taskId, _snoozeMarker));
   }
 
+  @override
   Future<void> cancelAll() async {
     await init();
     await _plugin.cancelAll();

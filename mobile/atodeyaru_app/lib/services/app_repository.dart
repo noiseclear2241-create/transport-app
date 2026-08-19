@@ -18,10 +18,17 @@ const _uuid = Uuid();
 /// - 無料版の利用制限（契約1件・端末1台、#23, #29）
 ///
 /// UIはこのクラスをProviderで受け取り、直接DatabaseServiceを触らない。
+///
+/// [notifications] は実機のプラットフォームチャンネルを持たないテスト環境でも
+/// 差し替えられるよう、コンストラクタで注入可能にしている（デフォルトは
+/// 本番実装のNotificationService.instance）。
 class AppRepository extends ChangeNotifier {
+  AppRepository({NotificationScheduler? notifications})
+      : _notifications = notifications ?? NotificationService.instance;
+
   final DatabaseService _db = DatabaseService.instance;
   final SettingsService _settingsService = SettingsService.instance;
-  final NotificationService _notifications = NotificationService.instance;
+  final NotificationScheduler _notifications;
 
   List<FamilyMember> familyMembers = [];
   List<Contract> contracts = [];

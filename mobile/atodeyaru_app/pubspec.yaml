@@ -39,6 +39,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  # テスト実行環境（デスクトップ/CI）で実際のSQLiteエンジンを使い、
+  # AppRepository経由のDB操作を検証するために使用（本番コードでは未使用）。
+  sqflite_common_ffi: ^2.3.4+4
 
 flutter:
   uses-material-design: true
