@@ -1,0 +1,44 @@
+name: atodeyaru_app
+description: "スマホ契約後のお金と予定を、忘れない。「あとでやること」"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # 状態管理（シンプルさ優先）
+  provider: ^6.1.2
+
+  # ローカル永続化（構造化データのみ・小容量）
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+  shared_preferences: ^2.3.2
+
+  # 日付計算・タイムゾーン（Asia/Tokyo, 暦月単位の計算）
+  timezone: ^0.9.4
+
+  # ローカル通知（サーバー通知を使わずコストを抑える）
+  flutter_local_notifications: ^17.2.3
+
+  # 課金（App Store / Google Play の設定画面から価格変更可能な構成）
+  in_app_purchase: ^3.2.0
+
+  # Googleカレンダー連携（プレミアム限定・手動同期のみ・常時同期しない）
+  google_sign_in: ^6.2.1
+  googleapis: ^13.2.0
+  http: ^1.2.2
+
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
